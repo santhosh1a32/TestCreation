@@ -1,0 +1,345 @@
+<style type="text/css">
+form[novalidate] input textarea {}
+
+input[required].ng-pristine,
+textarea[required].ng-pristine {}
+
+input.ng-invalid.ng-dirty,
+textarea.ng-invalid.ng-dirty {
+    border-color: red;
+}
+
+input.ng-valid.ng-dirty,
+textarea.ng-valid.ng-dirty {
+    border-color: green;
+}
+
+button:disabled {
+    background: #B0BFB3;
+    cursor: not-allowed;
+}
+</style>
+<form novalidate name="form">
+    <wizard>
+        <wz-step wz-title="Step 1" description="GENERAL">
+            <div class="setup-content mrgn-T60">
+                <div class="col-md-12 col-sm-12 col-xs-12">
+                    <div class="col-md-12 col-sm-12 col-xs-12">
+                        <h3>GENERAL INFORMATION</h3>
+                        <div class="row">
+                            <div class="form-group col-md-6 col-sm-6 col-xs-12">
+                                <label class="control-label">Name of the Program <span class="red">*</span></label>
+                                <input type="text" class="form-control" ng-model="vm.program.program_name" name="program_name" required />
+                                <span ng-messages="form.program_name.$dirty && form.program_name.$error">
+                        <span ng-message="required" class="error-inner">Program name is required</span>
+                                </span>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="form-group col-md-4 col-sm-4 col-xs-12">
+                                <label class="control-label">Enrollment Start Date <span class="red">*</span></label>
+                                <input class="date-icon form-control" type="text" name="esd" id="startDate" placeholder="MM/DD/YYYY" ng-click="vm.openFrom($event)" class="date-icon date-input" datepicker-popup="MM/dd/yyyy" ng-model="vm.program.start_date" is-open="vm.isFromOpened" max="'2015-06-22'" datepicker-options="vm.dateOptions" date-disabled="disabled(date, mode)" ng-required="true" close-text="Close" required ng-change="bindDateFrom()"/>
+                                <span ng-messages="form.esd.$dirty && form.esd.$error">
+                        <span ng-message="required" class="error-inner">Start Date is required</span>
+                            </div>
+                            <div class="form-group col-md-4 col-sm-4 col-xs-12">
+                                <label class="control-label">Enrollment End Date</label>
+                                <input class="date-icon form-control" type="text" name="eed" id="" placeholder="MM/DD/YYYY" ng-click="vm.openTo($event)" class="date-icon date-input" datepicker-popup="MM/dd/yyyy" ng-model="vm.program.end_date" is-open="vm.isToOpened" max="'2015-06-22'" datepicker-options="vm.dateOptions" date-disabled="disabled(date, mode)" ng-required="true" close-text="Close" required ng-change="bindDateTo()" max="vm.toMaxDate"/>
+                                
+                                <span ng-messages="form.eed.$dirty && form.eed.$error">
+                        <span ng-message="required" class="error-inner">End Date is required</span>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="form-group col-md-4 col-sm-4 col-xs-12">
+                                <label class="control-label">Program Duration (In Days) <span class="red">*</span></label>
+                                <input type="text" class="form-control" ng-model="vm.program.duration" name="program_duration" maxlength="3" ng-pattern="/^(0|[1-9][0-9]*)$/" required/>
+                                <span ng-messages="form.program_duration.$dirty && form.program_duration.$error">
+                        <span ng-message="required" class="error-inner">Program Duration is required</span>
+                                <span ng-message="pattern" class="error-inner">Program Duration should be in Number</span>
+                                </span>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="form-group col-md-6 col-sm-6 col-xs-12">
+                                <label class="control-label">Program Description <span class="red">*</span></label>
+                                <textarea class="form-control" placeholder="E.g. Program designed to reduce blood pressure and maintain a healthy lifestyle" name="prodesc" ng-model="vm.program.program_details" maxlength="1000" required></textarea><span class="pull-right font-10">(Max 1000 characters allowed)</span>
+                                <span ng-messages="form.prodesc.$dirty && form.prodesc.$error">
+                        <span ng-message="required" class="error-inner">Program Description is required</span>
+                                <span ng-message="maxlength" class="error-inner">Maximum 1000 charectors allowed</span></span>
+                            </div>
+                            <div class="form-group col-md-6 col-sm-6 col-xs-12">
+                                <label class="control-label">Care Plan Details <span class="red">*</span></label>
+                                <textarea class="form-control" placeholder="E.g Maintain a healthy body weight, Be physically active, Follow a healthy diet" ng-model="vm.program.care_plan" name="careplan" maxlength="1000" required></textarea><span class="pull-right font-10">(Max 1000 characters allowed)</span>
+                                <span ng-messages="form.careplan.$dirty && form.careplan.$error">
+                        <span ng-message="required" class="error-inner">Care Plan Details are required</span>
+                                <span ng-message="maxlength" class="error-inner">Maximum 1000 charectors allowed</span></span>
+                            </div>
+                        </div>
+                        <div class="row text-center mgn-TB10 pad-LR15">
+                            <input type="button" class="btn btn-default mob-mrgn-T10 mobile-btn next-btn save-tab" value="Next" wz-next/>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </wz-step>
+        <wz-step wz-title="Step 2">
+            <div class="setup-content mrgn-T60" id="step-2">
+                <div class="col-md-12 col-sm-12 col-xs-12">
+                    <div class="col-md-12 col-sm-12 col-xs-12">
+                        <h3>CLINICAL INFORMATION</h3>
+                        <div class="row">
+                            <div class="col-md-6 col-sm-6 col-xs-12">
+                                <div class="form-group col-md-12 col-sm-12 col-xs-12 no-pad">
+                                    <label class="control-label">Care Team</label>
+                                    <div class="box-border program-box">
+                                        <div class="care-inner-box pad-LR15 pad-TB10">
+                                            <div class="row">
+                                                <div class="col-md-10">
+                                                    <input type="text" class="form-control" ng-model="vm.CareTeamStaff" typeahead="physician as physician.staff_name for physician in vm.staffList | filter:$viewValue" autocomplete="off"/>
+                                                </div>
+                                                <div class="col-md-2 mob-pad-T10">
+                                                    <button type="button" class="btn btn-default btn-block add-btn" ng-click="vm.addStaff()">ADD</button>
+                                                </div>
+                                            </div>
+                                            <div class="pad-T10">
+                                                <p ng-repeat="staff in vm.program.staff_details track by $index" class="pill-cust font-14">{{staff.staff_name}} <span class="pill-kill" ng-click="vm.removeCareTeamMembers($index)">&times;</span></p>
+                                            </div>
+                                            <!-- <input type="text" class="form-control" ng-model="searchName.staff_name" />
+                                            <div class="cnt-block">
+                                                    <div ng-repeat="physician in vm.staffList | filter:searchName">
+                                                        <a href="" ng-click="vm.addStaff(physician)">{{physician.staff_name}}</a>
+                                                    </div>
+                                            </div> -->
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group col-md-12 col-sm-12 col-xs-12 no-pad">
+                                    <label class="control-label">Goals</label>
+                                    <div class="box-border program-box">
+                                        <div class="program-inner-box">
+                                            <div class="col-md-12 col-sm-12
+col-xs-12 pad-T15 pad-L15 pad-R15" ng-repeat="goal in vm.program.goals track by $index">
+                                                <textarea class="form-control mrgn-L-5" placeholder="E.g. Reduce blood pressure <140/90 mmHg" ng-model="goal.value" name="goals" maxlength="1000"></textarea><span class="pull-right font-10">(Max 1000 characters allowed)</span>
+                                                <img src="images/not_taken.png" class="remove-icn"/>
+                                            </div>
+                                        </div>
+                                        <div class="pull-right pad-R15 pad-T10">
+                                            <button class="font-12 btn-none" ng-click="vm.addFormFieldfunction('addGoal')">Add More <img src="images/add.png" alt="Add" class="pad-L5" /></button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6 col-sm-6 col-xs-12">
+                                <div class="form-group col-md-12 col-sm-12 col-xs-12 no-pad">
+                                    <label class="control-label">Vital Details</label>
+                                    <div class="box-border prog-vital-box">
+                                        <div class="prog-vital-inner-box">
+                                            <div class="pad-T15 pad-L15 pad-R15" ng-repeat="vital in vm.program.data_ranges track by $index">
+                                                <div class="form-group col-md-12 col-sm-12 col-xs-12 no-pad mrgn-L-5 dropdown">
+                                                    <select class="form-control" ng-model="vital.data_type">
+                                                        <option placeholder="None Selected" ng-selected="" ng-repeat="data in vm.vital_filter" value="{{data.type}}">{{data.vital_name}}</option>
+                                                    </select>
+                                                    <a href="" ng-click="vm.removeDeviceVitals($index)"><img src="images/not_taken.png" class="dropdown-remove-icn"/></a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="pull-right pad-R15 pad-T10">
+                                            <button class="font-12 btn-none" ng-click="vm.addFormFieldfunction('addDevice')">Add More <img src="images/add.png" alt="Add" class="pad-L5" /></button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row text-center pad-LR15">
+                            <input type="button" class="btn btn-default mob-mrgn-T10 mobile-btn cancel-btn" value="Back" wz-previous/>
+                            <input type="button" class="btn btn-default mob-mrgn-T10 mobile-btn next-btn save-tab mob-mar-L10 mrgn-L10" wz-next value="Next" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </wz-step>
+        <wz-step wz-title="Step 3">
+            <div class="setup-content mrgn-T60" id="step-3">
+                <div class="col-md-12 col-sm-12 col-xs-12">
+                    <div class="col-md-12 col-sm-12 col-xs-12">
+                        <h3>PARTICIPANT DETAILS</h3>
+                        <div class="row">
+                            <div class="form-group col-md-6 col-sm-6 col-xs-12">
+                                <label class="control-label">Who Should Participate</label>
+                                <div class="box-border part-det-box">
+                                    <div class="part-det-inner-box">
+                                        <div class="col-md-12 col-sm-12 col-xs-12 pad-T15 pad-L15 pad-R15" ng-repeat="inclusion in vm.program.inclusions track by $index">
+                                            <textarea class="form-control mrgn-L-5" placeholder="E.g. Individuals with prehypertension (>120/80 mmHg, ≤139/89 mmHg), or Hypertension ≥140/90mmHg" ng-model="inclusion.value" name="wsp" maxlength="1000"></textarea><span class="pull-right font-10">(Max 1000 characters allowed)</span>
+                                            <a href="" ng-click="vm.removeInclusions($index)">
+                                            <img src="images/not_taken.png" class="remove-icn"/></a>
+                                        </div>
+                                    </div>
+                                    <div class="pull-right pad-R15 pad-T10">
+                                        <button class="font-12 btn-none" ng-click="vm.addFormFieldfunction('addInclusions')">Add More <img src="images/add.png" alt="Add" class="pad-L5" /></button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group col-md-6 col-sm-6 col-xs-12">
+                                <label class="control-label">Who Should Not Participate</label>
+                                <div class="box-border part-det-box">
+                                    <div class="part-det-inner-box">
+                                        <div class="col-md-12 col-sm-12 col-xs-12 pad-T15 pad-L15 pad-R15" ng-repeat="exclusion in vm.program.exclusions track by $index">
+                                            <textarea class="form-control mrgn-L-5" placeholder="E.g. Pregnant Women" ng-model="exclusion.value" name="wsnp" maxlength="1000"></textarea><span class="pull-right font-10">(Max 1000 characters allowed)</span>
+                                            <a href="" ng-click="vm.removeExclusions($index)">
+                                            <img src="images/not_taken.png" class="remove-icn"/></a>
+                                        </div>
+                                    </div>
+                                    <div class="pull-right pad-R15 pad-T10">
+                                        <button class="font-12 btn-none" ng-click="vm.addFormFieldfunction('addExclusions')">Add More <img src="images/add.png" alt="Add" class="pad-L5" /></button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row text-center pad-LR15 mrgn-T30">
+                            <input type="button" class="btn btn-default cancel-btn mob-mrgn-T10 mobile-btn" value="Back" wz-previous/>
+                            <input type="button" class="btn btn-default cancel-btn mob-mar-L10 mrgn-L10 mob-mrgn-T10 mobile-btn" value="Cancel" />
+                            <input type="button" class="btn btn-default login-btn save-tab mob-mar-L10 mrgn-L10 mob-mrgn-T10 mobile-btn" data-toggle="modal" data-target="#myModal" value="Preview Program" ng-click="vm.previewProgram()" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </wz-step>
+    </wizard>
+</form>
+
+<script type="text/ng-template" id="preview_popup.html">
+    <!-- Modal content-->
+    <div class="modal-content">
+        <div class="modal-header">
+            <button type="button" class="close" ng-click="vmp.close()">&times;</button>
+            <h4 class="modal-title">Preview Program</h4>
+        </div>
+        <div class="modal-body">
+            <div class="container-fluid">
+                <div class="col-md-12 col-sm-12 col-xs-12 pad-TB10 no-pad">
+                    <div class="col-md-12 col-sm-12 col-xs-12">
+                        <div class="col-md-12 col-sm-12 col-xs-12 no-pad box-border pad-TB10">
+                            <div class="col-sm-12 col-xs-12 pad-B10"><b>Program Name :</b>&nbsp;{{vmp.program_desc.program_name}}</div>
+                            <div class="col-sm-12 col-xs-12 pad-B10"><b>Duration :</b>&nbsp;{{vmp.program_desc.duration}}&nbsp;days</div>
+                            <div class="col-sm-12 col-xs-12 pad-B10"><b>Enrollment Period :</b>&nbsp;{{vmp.program_desc.start_date | date:'MMM-dd-yyyy'}}&nbsp;&nbsp;to&nbsp;{{vmp.program_desc.end_date | date:'MMM-dd-yyyy'}}</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-12 col-sm-12 col-xs-12 ">
+                    <label class="light-font"> DESCRIPTION</label>
+                    <div class="col-md-12 col-sm-12 col-xs-12 box-border pad-TB10 prev-box">{{vmp.program_desc.program_details}}</div>
+                </div>
+                <div class="col-md-12 col-sm-12 col-xs-12 pad-T10">
+                    <label class="light-font"> CARE PLAN DETAILS</label>
+                    <div class="col-md-12 col-sm-12 col-xs-12 box-border pad-TB10 prev-box">
+                        <span class="cnt-block">{{vmp.program_desc.care_plan}}</span>
+                    </div>
+                </div>
+                <div class="col-md-12 col-sm-12 col-xs-12 pad-T10">
+                    <label class="light-font"> CARE TEAM</label>
+                    <div class="col-md-12 col-sm-12 col-xs-12 box-border pad-TB10 prev-box">
+                        <span ng-repeat="careteam in vmp.program_desc.staff_details">
+                                <ul>
+                                    <li class="col-md-6 col-sm-6 col-xs-6 pad-L0">{{careteam.staff_name}}</li>
+                                    </ul> 
+                                    </span>
+                    </div>
+                </div>
+                <div class="col-md-12 col-sm-12 col-xs-12 pad-T10" ">
+                              <label class="light-font "> VITAL DETAILS</label>
+                                <div class="col-md-12 col-sm-12 col-xs-12 box-border pad-TB10 prev-box ">
+                                <span ng-repeat="data in vmp.program_desc.data_ranges ">
+                                    <div class="col-md-6 col-sm-6 col-xs-6 pad-L0" ng-if="data.data_type==='BP'">Blood Pressure</div>
+                                    <div class="col-md-6 col-sm-6 col-xs-6 pad-L0" ng-if="data.data_type==='BMI'">BMI</div> 
+                                    <div class="col-md-6 col-sm-6 col-xs-6 pad-L0" ng-if="data.data_type==='WGHT'">Weight</div> 
+                                    <div class="col-md-6 col-sm-6 col-xs-6 pad-L0" ng-if="data.data_type==='HR'">Heart Rate</div> 
+                                </span>
+                                </div>
+                              </div>
+                              <div class="col-md-12 col-sm-12 col-xs-12 pad-T10 "">
+                    <label class="light-font"> GOALS</label>
+                    <div class="col-md-12 col-sm-12 col-xs-12 box-border pad-TB10 prev-box">
+                        <ul class="pad-L10">
+                            <li ng-repeat="goal in vmp.program_desc.goals">{{goal.value}}</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-md-12 col-sm-12 col-xs-12 pad-T10">
+                    <label class="light-font"> WHO SHOULD PARTICIPATE</label>
+                    <div class="col-md-12 col-sm-12 col-xs-12 box-border pad-TB10 prev-box">
+                        <ul class="pad-L10">
+                            <li ng-repeat="inclusion in vmp.program_desc.inclusions">{{inclusion.value}}</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-md-12 col-sm-12 col-xs-12 pad-T10">
+                    <label class="light-font"> WHO SHOULD NOT PARTICIPATE</label>
+                    <div class="col-md-12 col-sm-12 col-xs-12 box-border pad-TB10 prev-box">
+                        <ul class="pad-L10">
+                            <li ng-repeat="exclusion in vmp.program_desc.exclusions">{{exclusion.value}}</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="alert alert-danger" ng-if="vmp.cError">
+                    <strong>Error!</strong> {{vmp.cprogError}}
+                </div>
+                <div class="col-md-12 col-sm-12 col-xs-12 btn-nav mrgn-T30 mrgn-B30">
+                    <a ng-click="vmp.cancel()" class="btn cancel-btn prev-nav-btn mob-mrgn-T10 mobile-btn" value="Back">Cancel</a>
+                    <a class="btn next-btn prev-nav-btn mob-mrgn-T10 mobile-btn" ng-click="vmp.createProgram()">Create Program</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</script>
+
+<script>
+//For Window's Scroll
+
+$('.dash-div').css({
+    'height': Math.max(($(window).height() - 87)) + 'px',
+    'overflow': 'auto'
+});
+
+$(window).resize(function() {
+    $('.dash-div').css({
+        'height': Math.max(($(window).height() - 87)) + 'px',
+        'overflow': 'auto'
+    });
+    if ($('body').height() >= $(window).height()) {
+        $('body').css({
+            'overflow': 'auto'
+        });
+    }
+}).trigger('resize');
+
+//Functionality
+
+$(document.body).on('click', '.dropdown-menu li', function(event) {
+    var $target = $(event.currentTarget);
+    $target.closest('.dropdown').find('[data-bind="label "]').text($target.text()).end().children('.dropdown-toggle').dropdown('toggle');
+    return false;
+});
+
+
+$(document).ready(function() {
+    $(".ham-icon ").click(function() {
+            $(".side-nav ").toggle();
+        }),
+        $(".notify-icon ").click(function() {
+            $(".notify-content ").toggle();
+            $(".dot-content ").hide();
+            $(".user-content ").hide();
+        }),
+        $(".user-detail ").click(function() {
+            $(".user-content ").toggle();
+            $(".dot-content ").hide();
+            $(".notify-content ").hide();
+        }),
+        $(".dot-icon ").click(function() {
+            $(".dot-content ").toggle();
+            $(".notify-content ").hide();
+            $(".user-content ").hide();
+        });
+});
+</script>
